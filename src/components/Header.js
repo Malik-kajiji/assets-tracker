@@ -2,10 +2,13 @@ import { onAuthStateChanged } from 'firebase/auth';
 import React, { useEffect, useState } from 'react'
 import { MdOutlineAdd } from 'react-icons/md';
 import { auth } from '../firebaseConfig';
+import { AlertData } from '../context/AlertContext';
 
 const Header = () => {
+    const { setAlertData } = AlertData()
     const [isAddShowen,setIsAddShowen] = useState(false);
-    const [formData,setFormData] = useState({asset:'',date:'',percentage:''});
+    const [formData,setFormData] = useState({asset:'',percentage:''});
+    const [maxPercetage,setMaxPercentage] = useState(100)
     const [username,setUsername] = useState('')
     function handleChange(e){
         if(e.target.name === 'percentage'){
@@ -17,7 +20,11 @@ const Header = () => {
                     setFormData(prev => ({...prev,[e.target.name]:e.target.value}))
                 }
             }else if(typeof lastChar == 'number'){
-                setFormData(prev => ({...prev,[e.target.name]:e.target.value}))
+                if(parseFloat(e.target.value) > maxPercetage){
+                    setAlertData({msg:`maximam percentage is %${maxPercetage}`,type:'warrning',showen:true})
+                }else {
+                    setFormData(prev => ({...prev,[e.target.name]:e.target.value}))
+                }
             }
         }else {
             setFormData(prev => ({...prev,[e.target.name]:e.target.value}))
@@ -36,7 +43,7 @@ const Header = () => {
             }
         })
 
-        return () => removeStateChange()
+        return () => removeStateChange
     },[])
   return (
     <>
@@ -62,20 +69,19 @@ const Header = () => {
                     <option value="">select an asset</option>
                 </select>
                 <input 
-                    type="date" 
-                    placeholder='start date'
-                    name="date" 
-                    onChange={(e)=>handleChange(e)} 
-                    value={formData.date} />
-                <input 
                     type="text" 
                     placeholder='Percentage'
                     name="percentage" 
                     onChange={(e)=>handleChange(e)} 
                     value={formData.percentage}
                     />
+                    <p>maximam percentage is {maxPercetage}%</p>
+                    <h2 className='price'>
+                        {/* here goes the price of the stocks */}
+                        $3200
+                    </h2>
                 <button className='cancel' onClick={(e)=>handleAdd(e)}>Cancel</button>
-                <button className='add Btn' onClick={(e)=>handleAdd(e)}>Add</button>
+                <button className='add Btn' onClick={(e)=>handleAdd(e)}>Buy</button>
             </form>
         </article>
     </>

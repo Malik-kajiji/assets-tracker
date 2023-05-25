@@ -136,6 +136,7 @@ ul {
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
+    gap: 50px;
 }
 li {
     position: relative;
@@ -328,6 +329,20 @@ input {
     padding: 0 20px;
 }
 
+.add-asset p {
+    width: 380px;
+    transform: translateY(-80%);
+    font-size: 12px;
+}
+
+.add-asset .price {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    color: #00B894;
+}
+
 .cancel {
     border-radius: 8px;
     width: 380px;
@@ -335,7 +350,7 @@ input {
     color: #344054;
     border: 1px solid #344054;
     background-color: #fff;
-    margin-top: 260px;
+    margin-top: 320px;
 }
 .cancel:hover {
     outline: 2px solid #3440542f;

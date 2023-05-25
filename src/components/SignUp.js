@@ -13,10 +13,11 @@ const SignUp = () => {
         password: '',
         passwordConf: '',
         username:'',
-        initiateBalance:''
+        initiateBalance:'',
+        startDate:''
     })
 
-    const { email, password, passwordConf,username,initiateBalance } = formData
+    const { email, password, passwordConf,username,initiateBalance,startDate } = formData
 
     const handleSubmit = e => {
         e.preventDefault()
@@ -36,7 +37,7 @@ const SignUp = () => {
                         currentBalance:parseFloat(initiateBalance),
                         assests:[],
                         growth:0,
-                        startDate: new Date().toLocaleDateString()
+                        startDate: startDate
                     })
                     .then(()=>{
                         navigate('/')
@@ -59,6 +60,15 @@ const SignUp = () => {
             }else if(typeof lastChar == 'number'){
                 setFormData(prev => ({...prev,[e.target.name]:e.target.value}))
             }
+        }else if(e.target.name === 'startDate'){
+            if(new Date(e.target.value) > new Date('6/1/2022')){
+                setFormData({
+                    ...formData, 
+                    [e.target.name]: e.target.value,
+                })
+            }else {
+                setAlertData({type:'warrning',showen:true,msg:"you can't choose date befor this: (1/6/2022)"})
+            }
         }else {
             setFormData({
                 ...formData, 
@@ -68,6 +78,15 @@ const SignUp = () => {
     }
     return (
         <form onSubmit={(e)=>handleSubmit(e)}>
+            <label htmlFor="">start date</label>
+            <input 
+                type="date" 
+                autoComplete='off'
+                id='startDate'
+                name='startDate'
+                value={startDate}
+                onChange={handleChange}
+                />
             <label htmlFor="">initiate balance (USD)</label>
             <input 
                 type="text" 

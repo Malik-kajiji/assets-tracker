@@ -6,6 +6,7 @@
     height: 100vh;
     background-color: #FAFDFD;
     position: relative;
+    padding-top: 100px;
 }
 
 .main .logo {

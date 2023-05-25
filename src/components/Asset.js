@@ -44,7 +44,7 @@ const Asset = ({ title, setCurrentAsset, currentAsset, index, endDate }) => {
                     </p>
                 </div>
                 <article className='chart'>
-                    <LineChart stock={title} startDate={"2022-01-01"} endDate={"2023-01-01"} />
+                    {/* <LineChart stock={title} startDate={"2022-01-01"} endDate={"2023-01-01"} /> */}
                 </article>
             </div>
         </li>
