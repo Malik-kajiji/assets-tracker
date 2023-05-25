@@ -1,0 +1,63 @@
+.main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100vh;
+    background-color: #FAFDFD;
+    position: relative;
+}
+
+.main .logo {
+    position: fixed;
+    background-color: #fff;
+    width: 100%;
+    top: 0;
+    display: flex;
+    align-items: flex-end;
+    padding-bottom: 80px;
+    justify-content: center;
+    gap: 10px;
+    font-size: 48px;
+    font-family: 'Poppins';
+    height: 350px;
+    transform: translateY(-40%);
+    border-radius: 50%;
+}
+
+.main .logo p {
+    font-weight: 800;
+}
+.main .logo span {
+    font-weight: 300;
+    color: #B6BCC4;
+}
+
+.main form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    width: 320px;
+    gap: 10px;
+}
+.main form label {
+    width: 100%;
+}
+.main form input {
+    width: 100%;
+    height: 40px;
+    border: 1px solid #D0D5DD;
+    border-radius: 8px;
+    padding: 0 10px;
+}
+.main form button {
+    padding: 6px 18px;
+}
+.main form p {
+    width: 100%;
+    text-align: center;
+}
+.main form p span {
+    color: #215ABD;
+    text-decoration: underline;
+}
