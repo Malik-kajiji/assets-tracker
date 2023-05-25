@@ -1,18 +1,20 @@
 import React, { useState } from 'react';
 import { RiArrowDropDownLine } from 'react-icons/ri';
+import { LineChart } from './LineChart';
 
-const Asset = ({setCurrentAsset,currentAsset,index}) => {
-    function handleClick(){
-        if(currentAsset === index){
+const Asset = ({ title, setCurrentAsset, currentAsset, index, endDate }) => {
+    const startDate = "2022-01-01";
+    function handleClick() {
+        if (currentAsset === index) {
             setCurrentAsset(null)
-        }else {
+        } else {
             setCurrentAsset(index)
         }
     }
     return (
         <li className={`${index === currentAsset && 'showen'}`}>
             <div className='top'>
-                <h2>Tesla</h2>
+                <h2>{title}</h2>
                 <span className='green'>
                     +28%
                 </span>
@@ -42,6 +44,7 @@ const Asset = ({setCurrentAsset,currentAsset,index}) => {
                     </p>
                 </div>
                 <article className='chart'>
+                    <LineChart stock={title} startDate={"2022-01-01"} endDate={"2023-01-01"} />
                 </article>
             </div>
         </li>

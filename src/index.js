@@ -8,10 +8,10 @@ import Alert from './components/Alert';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <AlertContext>
-      <React.StrictMode>
+    {/* <React.StrictMode> */}
         <Alert />
         <App />
-      </React.StrictMode>
+    {/* </React.StrictMode> */}
   </AlertContext>
 );
 

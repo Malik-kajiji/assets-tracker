@@ -64,7 +64,6 @@ export const LineChart = ({ stock, startDate, endDate }) => {
 
     return (
         <div>
-            <h1>Line Chart</h1>
             <canvas id="line-chart" ref={chartRef} />
         </div>
     );
