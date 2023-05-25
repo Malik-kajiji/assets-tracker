@@ -7,6 +7,7 @@ import { doc, onSnapshot } from 'firebase/firestore';
 import { AreaChart, XAxis , YAxis ,Tooltip , Area } from 'recharts';
 import Asset from './Asset';
 import Header from './Header';
+import { LineChart } from './LineChart';
 
 const Home = () => {
     const [portfolio,setProtfolio] = useState({
