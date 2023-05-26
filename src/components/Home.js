@@ -23,40 +23,62 @@ const Home = () => {
     const [maxPercetage, setMaxPercentage] = useState(100);
     const [currentAsset, setCurrentAsset] = useState(null);
     const { setAlertData } = AlertData()
+    const [loaded, setLoaded] = useState(false)
+    const [price, setPrice] = useState([])
 
     useEffect(() => {
-        console.log('useEffect');
+        console.log("rendered");
         const Ref = doc(db, 'portfolio', auth.currentUser.uid)
         let removeSnapShot = onSnapshot(Ref, (res) => {
             if (res.exists()) {
+
+                console.log(`load status :${loaded}`)
                 let allAssestsPercentage = 0;
                 let newPrice = 0;
+                setPrice([]);
                 for (let i = 0; i < res.data().assets.length; i++) {
                     allAssestsPercentage = + res.data().assets[i].percentage
                     newPrice += res.data().assets[i].recentPrice * res.data().assets[i].stocksAmount
+                    setPrice(prev => { return [...prev, (res.data().assets[i].recentPrice * res.data().assets[i].stocksAmount)] })
                 }
-                setMaxPercentage(prev => prev - allAssestsPercentage)
-                let noneChangedBalance = res.data().initialBalance * ((100 - allAssestsPercentage) / 100)
+
+
+
+                setMaxPercentage(prev => prev - allAssestsPercentage)  //this causes a negative  max percent bug
+                if(maxPercetage >! -1){
+                    setMaxPercentage(0)
+             }
+                let noneChangedBalance = res.data().initialBalance * ((100 - allAssestsPercentage) / 100) 
                 let ChangedBalance = noneChangedBalance + newPrice
                 ChangedBalance = parseFloat(ChangedBalance.toFixed(2))
                 let growth = parseFloat((ChangedBalance / res.data().initialBalance).toFixed(2))
                 if (ChangedBalance === res.data().initialBalance) {
                     growth = 0
                 }
-                setProtfolio({ ...res.data(), currentBalance: ChangedBalance, growth })
+                
+                !loaded && setProtfolio({ ...res.data(), currentBalance: ChangedBalance, growth })
+                setLoaded(true)
+                loaded && setProtfolio(prev => {
+                    return { ...prev, currentBalance: prev.currentBalance, growth: prev.growth }
+                }
+
+                )
+
+
             }
         })
         return () => removeSnapShot
     }, [portfolio.startDate])
 
-
     useEffect(() => {
+
         let newObj = {}
         for (let i = 0; i < portfolio.assets.length; i++) {
-            newObj[portfolio.assets[i].asset] = portfolio.assets[i].percentage
+            let total = price.reduce((a, b) => a + b)
+            newObj[`${portfolio.assets[i].asset}: ${(price[i] / total * 100).toFixed(2)}%`] = price[i]
         }
         setPieChartData(newObj)
-    }, [portfolio.assets.length])
+    }, [portfolio.startDate])
 
 
 
@@ -65,13 +87,40 @@ const Home = () => {
             setAlertData({ type: 'warrning', showen: true, msg: "you can't choose date before this: (1/6/2022)" })
         } else if (new Date(e.target.value) >= new Date(new Date().getTime() - (24 * 60 * 60 * 1000))) {
             setAlertData({ type: 'warrning', showen: true, msg: "you can't choose a future date" })
+        } else if (new Date(e.target.value) > new Date('5/17/2023')) {
+            setAlertData({ type: 'warrning', showen: true, msg: "you can't choose date bigger than (17/5/2023) due to API limitations" })
         } else {
-            setProtfolio(prev => ({ ...prev, startDate: e.target.value }))
             const Ref = doc(db, 'portfolio', auth.currentUser.uid)
-            setDoc(Ref, { ...portfolio, startDate: e.target.value });
-            console.log(portfolio);
+            // setDoc(Ref, { ...portfolio, startDate: e.target.value });
+            setProtfolio(prev => ({ ...prev, startDate: e.target.value }))
+            setLoaded(true)
+            handleGrow();
         }
     }
+
+    const handleGrow = () => {
+        setPrice([]);
+        let newPrice = 0;
+        let newObj = {}
+        let total = price.reduce((a, b) => a + b)
+        for (let i = 0; i < portfolio.assets.length; i++) {
+            newPrice += portfolio.assets[i].recentPrice * portfolio.assets[i].stocksAmount
+            setPrice(prev=> {return [...prev,portfolio.assets[i].recentPrice * portfolio.assets[i].stocksAmount]})
+            newObj[`${portfolio.assets[i].asset}: ${(price[i] / total * 100).toFixed(2)}%`] = price[i]
+        }
+        setPieChartData(newObj)
+
+        // calculate intitial price
+        let noneChangedBalance = portfolio.initialBalance * ((100 - maxPercetage) / 100)
+        let ChangedBalance = noneChangedBalance + newPrice
+        ChangedBalance = parseFloat(ChangedBalance.toFixed(2))
+        let growth = parseFloat((ChangedBalance / portfolio.initialBalance).toFixed(2))
+        if (ChangedBalance === portfolio.initialBalance) {
+            growth = 0
+        }
+        setProtfolio(prev => ({ ...prev, currentBalance: ChangedBalance, growth }))
+    }
+    
 
     return (
         <section>

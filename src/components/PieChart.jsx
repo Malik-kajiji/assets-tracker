@@ -22,7 +22,7 @@ export const PieChart = ({ piData }) => {
                 labels: labels,
                 datasets: [
                     {
-                        label: "% stocks owned",
+                        label: "Amount in USD",
                         data: data,
                         backgroundColor: [
                             "rgba(255, 99, 132, 0.2)",
@@ -72,3 +72,6 @@ export const PieChart = ({ piData }) => {
         </div>
     );
 };
+
+
+

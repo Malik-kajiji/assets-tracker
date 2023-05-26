@@ -14,6 +14,8 @@ const Header = ({startDate,maxPercetage,initiatBalance,assets}) => {
         const {asset,percentage,totalPrice,stocksAmount,recentPrice} = formData
 
     const [username,setUsername] = useState('')
+
+   
     function handleChange(e){
         if(e.target.name === 'percentage'){
             const lastChar = parseFloat(e.target.value[e.target.value.length-1])
