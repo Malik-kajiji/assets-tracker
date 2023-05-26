@@ -1,22 +1,44 @@
 import React, { useEffect, useState, useRef } from "react";
 import Chart from "chart.js/auto";
+import fetchStockPrice from "../api/StockPriceFetch";
 
-export const LineChart = ({ stock }) => {
+export const LineChart2 = ({ stock, startDate, endDate }) => {
     const chartRef = useRef(null);
+    const [closePrice, setClosePrice] = useState([]);
+    const [openPrice, setOpenPrice] = useState([]);
     const [chartInstance, setChartInstance] = useState(null);
 
+    console.log(openPrice)
+
     useEffect(() => {
-        if (stock.length > 0) {
+        const getData = async () => {
+            fetchStockPrice(
+                stock,
+                startDate,
+                endDate
+                // startDate.toISOString().split("T")[0],
+                // endDate.toISOString().split("T")[0]
+            )
+                .then((response) => {
+                    setClosePrice([]);
+                    setOpenPrice([]);
+                    response.data.results.forEach((item) => {
+                        setClosePrice((closePrice) => [...closePrice, item.c]);
+                        setOpenPrice((openPrice) => [...openPrice, item.o]);
+                    });
+                });
+        };
+        // getData();
+    }, [stock, startDate, endDate]);
+
+    useEffect(() => {
+        if (closePrice.length > 0 && openPrice.length > 0 && chartRef.current) {
             if (chartInstance) {
                 chartInstance.destroy();
             }
 
-            const labels = stock.map((data) => data.date);
-            const closePrice = stock.map((data) => data.close);
-            const openPrice = stock.map((data) => data.open);
-
             const chartData = {
-                labels: labels,
+                labels: closePrice.map((_, index) => `Day ${index + 1}`),
                 datasets: [
                     {
                         label: "Close Price",
@@ -40,7 +62,7 @@ export const LineChart = ({ stock }) => {
             });
             setChartInstance(newChartInstance);
         }
-    }, [stock]);
+    }, [closePrice, openPrice]);
 
     return (
         <div className="line-chart">

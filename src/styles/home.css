@@ -122,7 +122,8 @@ header button p {
 
 .portfolio-chart {
     width: fit-content;
-    height: 400px;
+    /* height: 400px; */
+    /* width: 100%; */
     margin-inline: auto;
     margin-top: 40px;
 }
@@ -153,6 +154,7 @@ li {
     align-items: center;
     justify-content: space-between;
     padding: 0 40px;
+    z-index: 2;
 }
 .top h2 {
     color: #fff;
@@ -162,13 +164,13 @@ li {
     font-size: 28px;
 }
 
-.top .green {
+.green {
     color: #00B894;
 }
-
-.top .red {
+.red {
     color: #D63031;
 }
+
 
 li button {
     position: absolute;
@@ -180,6 +182,7 @@ li button {
     background-color: #215ABD;
     top: 55px;
     right: 100px;
+    z-index: 2;
 }
 
 li button span {
@@ -227,13 +230,12 @@ li button::after {
     height: 80px;
     border-radius: 8px;
     border: 2px solid #215ABD;
-    z-index: -1;
     overflow-y: hidden;
     transition: 0.3s;
 }
 
 li.showen .content {
-    height: 560px;
+    height: 640px;
 }
 
 .info {
@@ -267,18 +269,28 @@ li.showen .content {
     background-color: #215ABD;
 }
 
-.info p .data {
-    padding: 0 20px;
-}
-
 .chart {
-    background-color: #215abd64;
     position: absolute;
     left: 20px;
     top: 180px;
     width: calc(100% - 40px);
-    height: 360px;
+    height: 440px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
+.line-chart {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.info p .data {
+    padding: 0 20px;
+}
+
 
 .add-asset {
     position: fixed;
@@ -337,7 +349,14 @@ input {
 
 .add-asset .price {
     position: absolute;
-    top: 50%;
+    top: 55%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    color: #00B894;
+}
+.add-asset .stocks-amount {
+    position: absolute;
+    top: 45%;
     left: 50%;
     transform: translate(-50%,-50%);
     color: #00B894;

@@ -3,7 +3,7 @@ import '../styles/home.css';
 import { FiLogOut } from 'react-icons/fi';
 import { auth, db } from '../firebaseConfig';
 import { signOut } from 'firebase/auth';
-import { doc, onSnapshot } from 'firebase/firestore';
+import { doc, getDoc, onSnapshot } from 'firebase/firestore';
 import { AreaChart, XAxis, YAxis, Tooltip, Area } from 'recharts';
 import Asset from './Asset';
 import Header from './Header';
@@ -18,25 +18,46 @@ const Home = () => {
         initialBalance: 0,
         startDate: ''
     })
-    const [chartData, setChartData] = useState([])
+    const [pieChartData,setPieChartData] = useState({})
+    const [maxPercetage,setMaxPercentage] = useState(100);
     const [currentAsset, setCurrentAsset] = useState(null);
 
     useEffect(() => {
         const Ref = doc(db, 'portfolio', auth.currentUser.uid)
         let removeSnapShot = onSnapshot(Ref, (res) => {
             if (res.exists()) {
-                setProtfolio(res.data())
-                setChartData([
-                    { date: res.data().startDate, balance: res.data().initialBalance },
-                    { date: new Date().toLocaleDateString(), balance: res.data().currentBalance }
-                ])
+                let allAssestsPercentage = 0;
+                let newPrice = 0;
+                for(let i=0;i<res.data().assets.length;i++){
+                    allAssestsPercentage =+ res.data().assets[i].percentage
+                    newPrice += res.data().assets[i].recentPrice * res.data().assets[i].stocksAmount
+                }
+                setMaxPercentage(100 - allAssestsPercentage)
+                let noneChangedBalance = res.data().initialBalance * ((100 - allAssestsPercentage)/100) 
+                let ChangedBalance = noneChangedBalance + newPrice
+                ChangedBalance = parseFloat(ChangedBalance.toFixed(2))
+                let growth = parseFloat((ChangedBalance/res.data().initialBalance).toFixed(2))
+                if(ChangedBalance === res.data().initialBalance){
+                    growth = 0
+                }
+                setProtfolio({...res.data(),currentBalance:ChangedBalance,growth})
             }
         })
-        return () => removeSnapShot()
+        return () => removeSnapShot
     }, [])
+
+
+    useEffect(()=>{
+        let newObj = {}
+        for(let i =0; i< portfolio.assets.length ; i++){
+            newObj[portfolio.assets[i].asset] = portfolio.assets[i].percentage
+        }
+        setPieChartData(newObj)
+    },[portfolio.assets.length])
+    
     return (
         <section>
-            <Header />
+            <Header startDate={portfolio.startDate} maxPercetage={maxPercetage} initiatBalance={portfolio.initialBalance} />
             <article className='portfolio'>
                 <h2>Your Portfolio</h2>
                 <div className='Portfolio-status'>
@@ -54,28 +75,35 @@ const Home = () => {
                     </p>
                     <p>
                         <span className='title'>Growth</span>
-                        <span className='data'>{portfolio.growth}%</span>
+                        <span className={`data ${portfolio.growth>0? 'green' :'red'}`}>
+                            {portfolio.growth > 0 ?
+                                `+${portfolio.growth}%`
+                            :
+                                `${portfolio.growth}%`
+                            }
+                        </span>
                     </p>
                 </div>
                 <div className='portfolio-chart'>
-                    <AreaChart width={1100} height={400} data={chartData}
-                    >
-                        <defs>
-                            <linearGradient id="balance" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor={`#215ABD`} stopOpacity={0.6} />
-                                <stop offset="95%" stopColor={`#215ABD`} stopOpacity={0.1} />
-                            </linearGradient>
-                        </defs>
-                        <XAxis dataKey="date" />
-                        <YAxis dataKey='balance' />
-                        <Tooltip />
-                        <Area type="monotone" dataKey="balance" stroke="#215ABD" fillOpacity={1} fill="url(#balance)" />
-                    </AreaChart>
+                    <PieChart piData={pieChartData}/>
                 </div>
             </article>
             <ul>
-                <Asset title="TSLA" currentAsset={currentAsset} setCurrentAsset={setCurrentAsset} index={0} endDate={portfolio.startDate} />
-                <Asset title="AAPL" currentAsset={currentAsset} setCurrentAsset={setCurrentAsset} index={1} endDate={portfolio.startDate} />
+                {portfolio.assets.map((e,i)=>(
+
+                    <Asset 
+                        title={e.asset} 
+                        currentAsset={currentAsset} 
+                        setCurrentAsset={setCurrentAsset} 
+                        index={i} 
+                        key={i}
+                        startDate={portfolio.startDate} 
+                        balance={portfolio.initialBalance} 
+                        percentage={e.percentage} 
+                        stocksAmount={e.stocksAmount}
+                    />
+                ))
+                }
             </ul>
             <button className='logout' onClick={() => signOut(auth)}>
                 <p>sign out</p>

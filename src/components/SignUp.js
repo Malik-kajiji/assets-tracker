@@ -35,7 +35,7 @@ const SignUp = () => {
                     setDoc(Ref,{
                         initialBalance:parseFloat(initiateBalance),
                         currentBalance:parseFloat(initiateBalance),
-                        assests:[],
+                        assets:[],
                         growth:0,
                         startDate: startDate
                     })
@@ -61,13 +61,15 @@ const SignUp = () => {
                 setFormData(prev => ({...prev,[e.target.name]:e.target.value}))
             }
         }else if(e.target.name === 'startDate'){
-            if(new Date(e.target.value) > new Date('6/1/2022')){
+            if(new Date(e.target.value) < new Date('6/1/2022')){
+                setAlertData({type:'warrning',showen:true,msg:"you can't choose date before this: (1/6/2022)"})
+            } else if(new Date(e.target.value) >= new Date(new Date().getTime() - (24 * 60 * 60 * 1000))){
+                setAlertData({type:'warrning',showen:true,msg:"you can't choose a future date"})
+            } else {
                 setFormData({
                     ...formData, 
                     [e.target.name]: e.target.value,
                 })
-            }else {
-                setAlertData({type:'warrning',showen:true,msg:"you can't choose date befor this: (1/6/2022)"})
             }
         }else {
             setFormData({
