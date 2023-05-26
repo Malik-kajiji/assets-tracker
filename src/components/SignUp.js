@@ -21,7 +21,7 @@ const SignUp = () => {
 
     const handleSubmit = e => {
         e.preventDefault()
-        if(email === '' || password === '' || passwordConf === '' || username === ''){
+        if(email === '' || password === '' || passwordConf === '' || username === '' || initiateBalance === ''|| startDate === ''){
             setAlertData({type:'warrning',showen:true,msg:'make sure to fill all the inputs'})
         }else if(password !== passwordConf ){
             setAlertData({type:'warrning',showen:true,msg:'make sure to match the passwords'})

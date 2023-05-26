@@ -37,7 +37,7 @@ const Header = ({startDate,maxPercetage,initiatBalance}) => {
 
     function handleAdd(e){
         e.preventDefault();
-        if(asset === "" || percentage === ''){
+        if(asset === "" || percentage === '' || parseFloat(percentage) === 0){
             setAlertData({msg:`make sure to fill up the inputs`,type:'warrning',showen:true})
         }else {
             const ref = doc(db,'portfolio',auth.currentUser.uid)
@@ -59,6 +59,7 @@ const Header = ({startDate,maxPercetage,initiatBalance}) => {
                     setAlertData({msg:err.message,type:'error',showen:true})
                 })
                 .finally(()=>{
+                    setFormData({asset:'',percentage:'',totalPrice:0,stocksAmount:0,recentPrice:0})
                     setIsAddShowen(false)
                 })
             })
@@ -67,6 +68,7 @@ const Header = ({startDate,maxPercetage,initiatBalance}) => {
     
     function handleCancel(e){
         e.preventDefault();
+        setFormData({asset:'',percentage:'',totalPrice:0,stocksAmount:0,recentPrice:0})
         setIsAddShowen(false)
     }
 

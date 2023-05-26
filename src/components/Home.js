@@ -32,7 +32,7 @@ const Home = () => {
                     allAssestsPercentage =+ res.data().assets[i].percentage
                     newPrice += res.data().assets[i].recentPrice * res.data().assets[i].stocksAmount
                 }
-                setMaxPercentage(100 - allAssestsPercentage)
+                setMaxPercentage(prev => prev - allAssestsPercentage)
                 let noneChangedBalance = res.data().initialBalance * ((100 - allAssestsPercentage)/100) 
                 let ChangedBalance = noneChangedBalance + newPrice
                 ChangedBalance = parseFloat(ChangedBalance.toFixed(2))
