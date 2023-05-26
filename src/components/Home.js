@@ -57,7 +57,7 @@ const Home = () => {
     
     return (
         <section>
-            <Header startDate={portfolio.startDate} maxPercetage={maxPercetage} initiatBalance={portfolio.initialBalance} />
+            <Header startDate={portfolio.startDate} maxPercetage={maxPercetage} initiatBalance={portfolio.initialBalance} assets={portfolio.assets} />
             <article className='portfolio'>
                 <h2>Your Portfolio</h2>
                 <div className='Portfolio-status'>

@@ -5,7 +5,7 @@ import { auth, db } from '../firebaseConfig';
 import { AlertData } from '../context/AlertContext';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 
-const Header = ({startDate,maxPercetage,initiatBalance}) => {
+const Header = ({startDate,maxPercetage,initiatBalance,assets}) => {
     const { setAlertData } = AlertData()
     const [isAddShowen,setIsAddShowen] = useState(false);
     const [formData,setFormData] = useState(
@@ -40,29 +40,41 @@ const Header = ({startDate,maxPercetage,initiatBalance}) => {
         if(asset === "" || percentage === '' || parseFloat(percentage) === 0){
             setAlertData({msg:`make sure to fill up the inputs`,type:'warrning',showen:true})
         }else {
-            const ref = doc(db,'portfolio',auth.currentUser.uid)
-            getDoc(ref)
-            .then(res => {
-                const newAssests = [...res.data().assets,{
-                    asset:asset,
-                    percentage: parseFloat(percentage),
-                    totalPrice:parseFloat(totalPrice),
-                    stocksAmount:parseFloat(stocksAmount),
-                    recentPrice:parseInt(recentPrice)
-                }]
+            let doesExist = false;
+            for(let i = 0; i < assets.length ; i++){
+                if(assets[i].asset === asset){
+                    doesExist = true
+                }
+            }
 
-                setDoc(ref,{...res.data(),assets:newAssests})
-                .then(()=>{
-                    setAlertData({msg:`asset added successfully`,type:'success',showen:true})
+            if(doesExist){
+                setAlertData({msg:`the stock is already added`,type:'warrning',showen:true})
+            }else {
+
+                const ref = doc(db,'portfolio',auth.currentUser.uid)
+                getDoc(ref)
+                .then(res => {
+                    const newAssests = [...res.data().assets,{
+                        asset:asset,
+                        percentage: parseFloat(percentage),
+                        totalPrice:parseFloat(totalPrice),
+                        stocksAmount:parseFloat(stocksAmount),
+                        recentPrice:parseInt(recentPrice)
+                    }]
+    
+                    setDoc(ref,{...res.data(),assets:newAssests})
+                    .then(()=>{
+                        setAlertData({msg:`asset added successfully`,type:'success',showen:true})
+                    })
+                    .catch((err)=>{
+                        setAlertData({msg:err.message,type:'error',showen:true})
+                    })
+                    .finally(()=>{
+                        setFormData({asset:'',percentage:'',totalPrice:0,stocksAmount:0,recentPrice:0})
+                        setIsAddShowen(false)
+                    })
                 })
-                .catch((err)=>{
-                    setAlertData({msg:err.message,type:'error',showen:true})
-                })
-                .finally(()=>{
-                    setFormData({asset:'',percentage:'',totalPrice:0,stocksAmount:0,recentPrice:0})
-                    setIsAddShowen(false)
-                })
-            })
+            }
         }
     }
     

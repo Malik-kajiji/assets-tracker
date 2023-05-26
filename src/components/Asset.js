@@ -12,8 +12,6 @@ const Asset = ({ title, setCurrentAsset,stocksAmount, currentAsset, index, start
     const beginBalnce = parseFloat((balance * (percentage/100)).toFixed(2))
     const [currentBalance,setCurrentBalance] = useState(0)
 
-    console.log(chartData)
-
 
     function handleClick() {
         if (currentAsset === index) {
