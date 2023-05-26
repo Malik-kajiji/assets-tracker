@@ -90,7 +90,7 @@ header button p {
     flex-wrap: wrap;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 40px 400px;
+    gap: 40px 100px;
 }
 .Portfolio-status p {
     display: flex;
@@ -106,7 +106,7 @@ header button p {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 220px;
+    width: 200px;
     color: #fff;
     border-radius: 20px 0 0 20px;
     transform: translateX(-1px);
@@ -236,6 +236,7 @@ li button::after {
 
 li.showen .content {
     height: 640px;
+    min-width: 600px;
 }
 
 .info {
@@ -244,9 +245,10 @@ li.showen .content {
     left: 20px;
     width: calc(100% - 40px);
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    height: 40px;
+    gap: 20px 0px;
 }
 .info p {
     display: flex;
@@ -278,6 +280,7 @@ li.showen .content {
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-top: 20px;
 }
 .line-chart {
     height: 100%;
@@ -402,3 +405,10 @@ input {
     display: flex;
     font-size: 20px;
 }
+
+
+@media screen and (min-width: 1800px) {
+    .Portfolio-status {
+        gap: 40px 400px;
+    }
+  }
