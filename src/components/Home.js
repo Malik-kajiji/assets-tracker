@@ -91,7 +91,7 @@ const Home = () => {
             setAlertData({ type: 'warrning', showen: true, msg: "you can't choose date bigger than (17/5/2023) due to API limitations" })
         } else {
             const Ref = doc(db, 'portfolio', auth.currentUser.uid)
-            // setDoc(Ref, { ...portfolio, startDate: e.target.value });
+            // setDoc(Ref, { ...portfolio, startDate: e.target.value }); causes overrite of data after updates
             setProtfolio(prev => ({ ...prev, startDate: e.target.value }))
             setLoaded(true)
             handleGrow();
@@ -110,7 +110,7 @@ const Home = () => {
         }
         setPieChartData(newObj)
 
-        // calculate intitial price
+        // calculate intitial price by subtraction money left after purchasing stocks rather than using %ages which are dynamic thus error prone
         let noneChangedBalance = portfolio.initialBalance * ((100 - maxPercetage) / 100)
         let ChangedBalance = noneChangedBalance + newPrice
         ChangedBalance = parseFloat(ChangedBalance.toFixed(2))
