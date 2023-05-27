@@ -29,14 +29,15 @@ const Home = () => {
                 let allAssestsPercentage = 0;
                 let newPrice = 0;
                 for(let i=0;i<res.data().assets.length;i++){
-                    allAssestsPercentage =+ res.data().assets[i].percentage
+                    allAssestsPercentage += res.data().assets[i].percentage
                     newPrice += res.data().assets[i].recentPrice * res.data().assets[i].stocksAmount
                 }
+
                 setMaxPercentage(prev => prev - allAssestsPercentage)
                 let noneChangedBalance = res.data().initialBalance * ((100 - allAssestsPercentage)/100) 
                 let ChangedBalance = noneChangedBalance + newPrice
                 ChangedBalance = parseFloat(ChangedBalance.toFixed(2))
-                let growth = parseFloat((ChangedBalance/res.data().initialBalance).toFixed(2))
+                let growth = parseFloat((ChangedBalance / (res.data().initialBalance / 100) - 100).toFixed(2))
                 if(ChangedBalance === res.data().initialBalance){
                     growth = 0
                 }

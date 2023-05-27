@@ -89,12 +89,26 @@ const Header = ({startDate,maxPercetage,initiatBalance,assets}) => {
             const ref = doc(db,'stocks',asset)
             getDoc(ref)
             .then((res)=>{
-                let startFrom = (new Date(startDate).getTime() - new Date('2022-05-26').getTime() + (24 * 60 * 60 * 1000 * 2)) / 1000 / 60 / 60 / 24 
-                startFrom = startFrom - (startFrom / 7 * 2) - 5
-                const data = res.data().results.slice(startFrom)
+                const difference = (new Date().getTime() - new Date('2023-05-24').getTime())
+                const data = res.data().results
+
+                let newData = data.map((e)=>{
+                    const { c:close, o:open , t:time  } = e
+                    if(time > (new Date(startDate).getTime() - difference)){
+                        return {
+                            date: new Date(time + difference).toLocaleDateString(),
+                            open:open ,
+                            close:close
+                        }
+                    }
+                })
+
+                newData = newData.filter(e => e !== undefined)
+
+
                 let newPrice = (initiatBalance * parseFloat(formData.percentage) / 100).toFixed(2)
-                let newAmount = (parseFloat(newPrice) / data[0].c).toFixed(2)
-                let stockPrice = data[data.length - 1].c
+                let newAmount = (parseFloat(newPrice) / newData[0].close).toFixed(2)
+                let stockPrice = newData[newData.length - 1].close
                 setFormData(prev=>({
                     ...prev,
                     totalPrice:newPrice,

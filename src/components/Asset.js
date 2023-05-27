@@ -27,25 +27,28 @@ const Asset = ({ title, setCurrentAsset,stocksAmount, currentAsset, index, start
         const Ref = doc(db, 'stocks', title)
         let removeSnapShot = onSnapshot(Ref, (res) => {
             if (res.exists() && startDate !== '') {
-                let startFrom = (new Date(startDate).getTime() - new Date('2022-05-26').getTime() + (24 * 60 * 60 * 1000 * 2)) / 1000 / 60 / 60 / 24 
-                startFrom = startFrom - (startFrom / 7 * 2) - 5
-                const difference = (new Date().getTime() - new Date('2023-05-26').getTime())
-                const data = res.data().results.slice(startFrom)
-                let growthPercetage = data[data.length - 1].c / (data[0].c / 100) - 100
-                setGrowth(growthPercetage.toFixed(2))
-                setCurrentBalance(parseFloat((beginBalnce + (beginBalnce * growthPercetage/100)).toFixed(2)))
+                const difference = (new Date().getTime() - new Date('2023-05-23').getTime())
+                const data = res.data().results
 
-                setChartData(()=>{
-                    const newData = data.map((e)=>{
-                        const { c:close, o:open , t:time  } = e
+                let newData = data.map((e)=>{
+                    const { c:close, o:open , t:time  } = e
+                    if(time > (new Date(startDate).getTime() - difference)){
                         return {
                             date: new Date(time + difference).toLocaleDateString(),
                             open:open * stocksAmount,
                             close:close * stocksAmount
                         }
-                    })
-                    return newData
+                    }
                 })
+
+                newData = newData.filter(e => e !== undefined)
+
+                let growthPercetage = (newData[newData.length - 1].close * stocksAmount) / (newData[0].close * stocksAmount / 100) - 100
+                setGrowth(growthPercetage.toFixed(2))
+                setCurrentBalance(parseFloat((beginBalnce + (beginBalnce * growthPercetage/100)).toFixed(2)))
+
+                setChartData(() => newData.filter(e => e !== undefined))
+                
             }
         })
         return () => removeSnapShot
